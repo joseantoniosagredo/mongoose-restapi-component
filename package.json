@@ -1,7 +1,7 @@
 {
-  "name": "mongoose_component",
+  "name": "mongoose_restapi_react_component",
   "version": "1.0.0",
-  "description": "mongoose_component React component",
+  "description": "A React component for UI generated from mongoose_restapi package",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -24,15 +24,24 @@
     "react": "16.x"
   },
   "devDependencies": {
+    "@material-ui/core": "^3.3.2",
+    "@material-ui/icons": "^3.0.1",
     "nwb": "0.23.x",
     "react": "^16.6.0",
     "react-dom": "^16.6.0"
   },
-  "author": "",
+  "author": "Héctor Ribes",
   "homepage": "",
   "license": "MIT",
-  "repository": "",
   "keywords": [
-    "react-component"
-  ]
+    "react-component",
+    "mongoose",
+    "mongoose-restapi",
+    "ui",
+    "mongoose-ui"
+  ],
+  "repository": {
+      "type": "git",
+      "url": "http://my.git.repo"
+  }
 }

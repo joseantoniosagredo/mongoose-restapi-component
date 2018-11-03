@@ -1,5 +1,9 @@
-import React, {Component} from 'react'
-
+import App from './components/App'
+export { default as AddForm } from './components/AddForm'
+export { default as ModifyForm } from './components/ModifyForm'
+export { default as Table } from './components/TableData'
+export default App
+/*
 export default class extends Component {
   render() {
     return <div>
@@ -7,3 +11,4 @@ export default class extends Component {
     </div>
   }
 }
+*/
