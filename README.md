@@ -1,16 +1,9 @@
-# mongoose_component
+# React component for Mongoose API UI
 
-[![Travis][build-badge]][build]
-[![npm package][npm-badge]][npm]
-[![Coveralls][coveralls-badge]][coveralls]
+[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
-Describe mongoose_component here.
-
-[build-badge]: https://img.shields.io/travis/user/repo/master.png?style=flat-square
-[build]: https://travis-ci.org/user/repo
-
-[npm-badge]: https://img.shields.io/npm/v/npm-package.png?style=flat-square
-[npm]: https://www.npmjs.org/package/npm-package
-
-[coveralls-badge]: https://img.shields.io/coveralls/user/repo/master.png?style=flat-square
-[coveralls]: https://coveralls.io/github/user/repo
+This package provides a set of React components in order to integrate in your React application the configuration panel:
+  - `default`: exports the source app. Needs tree object prop from publishUI mongoose-restapi package.
+  - `AddForm`: exports only for model (from tree) provided the add form.
+  - `ModifyForm`: exports only for model (from tree) provided the add form.
+  - `Table`: exports table for model (from tree) a table with get request.

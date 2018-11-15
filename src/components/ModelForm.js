@@ -1,39 +1,84 @@
 import React from 'react'
+import {
+  Edit,
+  SimpleForm,
+  ReferenceArrayInput,
+  AutocompleteArrayInput,
+  ReferenceInput,
+  TextInput,
+  TabbedForm,
+  FormTab,
+  LongTextInput,
+  ArrayInput,
+  SimpleFormIterator,
+  SelectInput,
+  DisabledInput
+} from 'react-admin'
 
-import ArrayModelForm from './ModelFormArray'
-import withStyles from '@material-ui/core/styles/withStyles'
-import TextFieldUI from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-const textFieldStyle = {
-    root: {
-        margin: '10px'
-    }
+function parsePath (el) {
+  if (el.type === 'String') {
+    return <TextInput source={el.name} required={el.required} />
+  }
+  if (el.type === 'Date') {
+    return <TextInput source={el.name} required={el.required} />
+  }
+  if (el.type === 'ObjectId') {
+    return <DisabledInput source={el.name} required={el.required} />
+  }
+  if (el.type === 'Number') {
+    return <TextInput source={el.name} required={el.required} />
+  }
+  if (el.type === 'Ref') {
+    return (
+      <ReferenceInput source={el.name} reference={el.to}>
+        <SelectInput optionText={'name'} />
+      </ReferenceInput>
+    )
+  }
+  if (el.type === 'Array') {
+    return (
+      <ArrayInput source={el.name}>
+        <SimpleFormIterator>
+          {el.children.map(parsePath)}
+        </SimpleFormIterator>
+      </ArrayInput>
+    )
+  }
+  if (el.type === 'ArrayRef') {
+    return (
+      <ArrayInput source={el.name}>
+        <SimpleFormIterator>
+          <ReferenceInput source={el.name} reference={el.to}>
+            <SelectInput optionText={'name'} />
+          </ReferenceInput>
+        </SimpleFormIterator>
+      </ArrayInput>
+    )
+  }
+  return null
 }
-const TextField = withStyles(textFieldStyle)(TextFieldUI)
-export default class ModelForm extends React.Component {
-    handleChange(path, event) {
-        this.props.onChange({ ...this.props.value, [path]: event.target.value })
-    }
-    handleModelChange(path, value) {
-        this.props.onChange({ ...this.props.value, [path]: value })
-    }
-    renderPath(path) {
-        if (path.complex) {
-            return <div>
-                <div style={{ marginLeft: 5, marginTop: 5 }}><InputLabel required={path.required} >{path.name}</InputLabel></div>
-                <ModelForm value={this.props.value[path.name]} onChange={this.handleModelChange.bind(this, path.name)} paths={path.children} />
-            </div>
-        }
-        if (path.type === 'Array') {
-            return <div>
-                <div style={{ marginLeft: 5, marginTop: 5 }}><InputLabel required={path.required} >{path.name}</InputLabel></div>
-                <div><ArrayModelForm value={this.props.value[path.name]} onChange={this.handleModelChange.bind(this, path.name)} paths={path.children} label={path.label ? path.label : '_id'} /></div>
-            </div>
-        }
-        return <TextField value={this.props.value[path.name]} onChange={this.handleChange.bind(this, path.name)} label={path.name} required={path.required} />
-    }
-    render() {
-        const { paths } = this.props
-        return paths.filter(path => path.name !== '_id' && path.name !== '__v').map(path => this.renderPath(path));
-    }
+function parseComplex (name, children, isArray = false) {
+  return (
+    <FormTab label={name}>
+      {children.map(parsePath)}
+    </FormTab>
+  )
+}
+export default function PostCreate (model) {
+  const General = props =>
+    parseComplex(
+      'General',
+      model.paths.filter(
+        path => !(path.hasOwnProperty('children') && path.type !== 'Array')
+      )
+    )
+  const OtherTabs = props =>
+    model.paths
+      .filter(path => path.hasOwnProperty('children') && path.type !== 'Array')
+      .map(el => parseComplex(el.name, el.children, el.type === 'Array'))
+
+  return {
+    General,
+    OtherTabs
+  }
 }
