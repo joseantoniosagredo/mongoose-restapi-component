@@ -48,7 +48,7 @@ function parsePath (el) {
     return (
       <ArrayInput source={el.name}>
         <SimpleFormIterator>
-          <ReferenceInput source={el.name} reference={el.to}>
+          <ReferenceInput reference={el.to}>
             <SelectInput optionText={'name'} />
           </ReferenceInput>
         </SimpleFormIterator>
@@ -65,20 +65,15 @@ function parseComplex (name, children, isArray = false) {
   )
 }
 export default function PostCreate (model) {
-  const General = props =>
-    parseComplex(
+  return <TabbedForm>
+    {parseComplex(
       'General',
       model.paths.filter(
         path => !(path.hasOwnProperty('children') && path.type !== 'Array')
       )
-    )
-  const OtherTabs = props =>
-    model.paths
+    )}
+    {model.paths
       .filter(path => path.hasOwnProperty('children') && path.type !== 'Array')
-      .map(el => parseComplex(el.name, el.children, el.type === 'Array'))
-
-  return {
-    General,
-    OtherTabs
-  }
+      .map(el => parseComplex(el.name, el.children, el.type === 'Array'))}
+  </TabbedForm>
 }
