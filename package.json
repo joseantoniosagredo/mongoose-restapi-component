@@ -1,6 +1,6 @@
 {
   "name": "mongoose-restapi-ui-component",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A React component for UI generated from mongoose-restapi-ui package",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -21,6 +21,7 @@
   },
   "dependencies": {},
   "peerDependencies": {
+    "react-admin": "^2.4.2",
     "react": "16.x"
   },
   "proxy": "http://localhost:3000",
@@ -33,7 +34,6 @@
     "hoek": ">=4.2.1",
     "nwb": "0.23.x",
     "react": "^16.6.0",
-    "react-admin": "^2.4.2",
     "react-autosuggest": "^9.4.2",
     "react-dom": "^16.6.0",
     "react-scripts": "^2.1.1",
