@@ -28,7 +28,11 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
         range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
         filter: JSON.stringify(params.filter)
       }
-      return { url: `${API_URL}/${resource}` }
+      const search = new URLSearchParams()
+      Object.keys(params.filter).forEach(key => {
+        search.append(key, params.filter[key])
+      })
+      return { url: `${API_URL}/${resource}?${search}` }
     }
     case GET_ONE: {
       return { url: `${API_URL}/${resource}/${params.id}` }
@@ -104,13 +108,11 @@ const convertHTTPResponseToDataProvider = (
         }),
         total: json.length
       }
-    case GET_ONE:
-      const { _id, ...other } = json
-      return { data: { id: _id, ...other } }
     case CREATE:
       return { data: { ...params.data, id: json.id } }
     default:
-      return { data: json }
+      const { _id, ...other } = json
+      return { data: { id: _id, ...other } }
   }
 }
 

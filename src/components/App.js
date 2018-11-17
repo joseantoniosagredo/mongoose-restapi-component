@@ -15,7 +15,7 @@ class App extends Component {
   }
 
   componentDidMount () {
-    fetch('/tree')
+    fetch(this.props.tree)
       .then(res =>
         res.json().then(tree => {
           this.setState({ tree })
@@ -30,7 +30,7 @@ class App extends Component {
     return (
       <div>
         {this.state.tree &&
-          <Admin dataProvider={dataProvider}>
+          <Admin authProvider={this.props.authProvider} dataProvider={dataProvider}>
             {this.state.tree.map(model => (
               <Resource
                 name={model.name}

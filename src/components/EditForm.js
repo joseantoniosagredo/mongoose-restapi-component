@@ -5,7 +5,7 @@ import { Edit, TabbedForm } from 'react-admin'
 export default function PostCreate (model) {
   const CreateForm = props => (
     <Edit {...props}>
-        { ModelForm(model)}
+        { ModelForm(model, true)}
     </Edit>
   )
   return CreateForm
