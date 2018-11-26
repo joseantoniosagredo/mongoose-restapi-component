@@ -13,6 +13,7 @@ export default (props) => <Admin tree='your/path/to/tree' />
 
 Posible props:
 - `tree`: The tree path published by [mongoose-restapi-ui](https://www.npmjs.com/package/mongoose-restapi-ui)
-- `authProvider`: [authProvider](https://github.com/marmelab/react-admin/blob/master/docs/Admin.md#authprovider) from react-admin.
+- `headers`: Custom headers (Example: {Authorization: 'Basic token'})
+- `theme`: Theme from [@material-ui/core](https://material-ui.com/customization/themes/)
 
 Enjoy!
