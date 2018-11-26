@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 
-import Example from '../../src'
+import Example from '../../src/components/App'
 
 class Demo extends Component {
   constructor(props) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Admin, Resource, ListGuesser } from 'react-admin'
+import { Admin, Resource } from 'react-admin'
 import dataProvider from './data_provider'
 import CreateForm from './CreateForm'
 import EditForm from './EditForm'
@@ -25,14 +25,19 @@ class App extends Component {
         console.log(err)
       })
   }
-  
+
   render () {
     return (
       <div>
         {this.state.tree &&
-          <Admin authProvider={this.props.authProvider} dataProvider={dataProvider}>
+          <Admin
+            authProvider={this.props.authProvider}
+            theme={this.props.theme}
+            dataProvider={dataProvider(this.state.tree, this.props.headers)}
+          >
             {this.state.tree.map(model => (
               <Resource
+                key={model.route}
                 name={model.name}
                 list={ListForm(model)}
                 edit={EditForm(model)}

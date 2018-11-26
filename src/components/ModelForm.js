@@ -1,14 +1,9 @@
 import React from 'react'
 import {
-  Edit,
-  SimpleForm,
-  ReferenceArrayInput,
-  AutocompleteArrayInput,
   ReferenceInput,
   TextInput,
   TabbedForm,
   FormTab,
-  LongTextInput,
   ArrayInput,
   SimpleFormIterator,
   SelectInput,
@@ -56,7 +51,6 @@ function parsePath (el) {
     )
   }
   if (el.type.startsWith('Array')) {
-    const type = el.type.slice('Array'.length)
     return (
       <ArrayInput label={el.label} source={el.name} required={el.required}>
         <SimpleFormIterator>

@@ -6,6 +6,7 @@ import {
   CREATE,
   UPDATE,
   DELETE,
+  DELETE_MANY,
   fetchUtils
 } from 'react-admin'
 
@@ -17,9 +18,11 @@ const API_URL = window.location.origin
  * @param {Object} params The Data Provider request params, depending on the type
  * @returns {Object} { url, options } The HTTP request parameters
  */
-const convertDataProviderRequestToHTTP = (type, resource, params) => {
+const convertDataProviderRequestToHTTP = (models, type, resource, params) => {
+  const path = models.find(el => el.name === resource).route
   switch (type) {
     case GET_LIST: {
+      /*
       const { page, perPage } = params.pagination
       const { field, order } = params.sort
       const query = {
@@ -27,23 +30,25 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
         range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
         filter: JSON.stringify(params.filter)
       }
+      */
       const search = new URLSearchParams()
       Object.keys(params.filter).forEach(key => {
         search.append(key, params.filter[key])
       })
-      return { url: `${API_URL}/${resource}?${search}` }
+      return { url: `${API_URL}${path}?${search}` }
     }
     case GET_ONE: {
-      return { url: `${API_URL}/${resource}/${params.id}` }
+      return { url: `${API_URL}${path}/${params.id}` }
     }
     case GET_MANY: {
       const search = new URLSearchParams()
       params.ids.forEach(id => {
         search.append('_id', id)
       })
-      return { url: `${API_URL}/${resource}?${search.toString()}` }
+      return { url: `${API_URL}${path}?${search.toString()}` }
     }
     case GET_MANY_REFERENCE: {
+      /*
       const { page, perPage } = params.pagination
       const { field, order } = params.sort
       const query = {
@@ -54,21 +59,23 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
           [params.target]: params.id
         })
       }
-      return { url: `${API_URL}/${resource}` }
+      */
+
+      return { url: `${API_URL}${path}` }
     }
     case UPDATE:
       return {
-        url: `${API_URL}/${resource}/${params.id}`,
+        url: `${API_URL}${path}/${params.id}`,
         options: { method: 'PUT', body: JSON.stringify(params.data) }
       }
     case CREATE:
       return {
-        url: `${API_URL}/${resource}`,
+        url: `${API_URL}${path}`,
         options: { method: 'POST', body: JSON.stringify(params.data) }
       }
     case DELETE:
       return {
-        url: `${API_URL}/${resource}/${params.id}`,
+        url: `${API_URL}${path}/${params.id}`,
         options: { method: 'DELETE' }
       }
     default:
@@ -89,7 +96,7 @@ const convertHTTPResponseToDataProvider = (
   resource,
   params
 ) => {
-  const { headers, json } = response
+  const { json } = response
   switch (type) {
     case GET_LIST:
       return {
@@ -121,14 +128,30 @@ const convertHTTPResponseToDataProvider = (
  * @param {Object} payload Request parameters. Depends on the request type
  * @returns {Promise} the Promise for response
  */
-export default (type, resource, params) => {
+export default (models, headers) => (type, resource, params) => {
   const { fetchJson } = fetchUtils
+  if (type === DELETE_MANY) {
+    return Promise.all(
+      params.ids.map(id => {
+        const {
+          url,
+          options
+        } = convertDataProviderRequestToHTTP(models, DELETE, resource, { id })
+        return fetchJson(url, { ...options, headers }).then(response =>
+          convertHTTPResponseToDataProvider(response, DELETE, resource, params)
+        )
+      })
+    ).then(() => {
+      return { data: [] }
+    })
+  }
   const { url, options } = convertDataProviderRequestToHTTP(
+    models,
     type,
     resource,
     params
   )
-  return fetchJson(url, options).then(response =>
+  return fetchJson(url, { ...options, headers }).then(response =>
     convertHTTPResponseToDataProvider(response, type, resource, params)
   )
 }

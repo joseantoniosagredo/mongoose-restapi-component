@@ -1,6 +1,6 @@
 import React from 'react'
 import ModelForm from './ModelForm'
-import { Edit, TabbedForm } from 'react-admin'
+import { Edit } from 'react-admin'
 
 export default function PostCreate (model) {
   const CreateForm = props => (

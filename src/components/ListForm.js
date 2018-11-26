@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   List,
-  SimpleList,
   Datagrid,
   EditButton,
   ArrayField,
@@ -9,9 +8,10 @@ import {
   ChipField,
   ReferenceField,
   ReferenceArrayField,
+  FunctionField,
   TextField
 } from 'react-admin'
-import { Filter, TextInput } from 'react-admin';
+import { Filter, TextInput } from 'react-admin'
 
 function parsePath (el, key) {
   if (el.type === 'String') {
@@ -44,39 +44,57 @@ function parsePath (el, key) {
   }
   if (el.type === 'ArrayRef') {
     return (
-      <ReferenceArrayField label={el.name} key={key} source={el.name} reference={el.to}>
+      <ReferenceArrayField
+        label={el.name}
+        key={key}
+        source={el.name}
+        reference={el.to}
+      >
         <SingleFieldList>
           <ChipField source={'name'} />
         </SingleFieldList>
       </ReferenceArrayField>
     )
   }
-  /*
-  if (el.type.startsWith('Array')){
-    const type = el.type.slice('Array'.length)
-    return (<ArrayField source={el.name} required={el.required}>
-      <SimpleList secondaryText={el=>el}/>
-    </ArrayField>)
-  }*/
-
-  return null
+  if (el.type && el.type.startsWith('Array')) {
+    const CursorComponent = ({ record }) => {
+      return (
+        <ul>
+          {record[el.name] &&
+            record[el.name].map(child => (
+              <li key={child}>{child.toString()}</li>
+            ))}
+        </ul>
+      )
+    }
+    CursorComponent.defaultProps = { addLabel: true }
+    return <CursorComponent key={key} />
+  }
+  if (!el.complex) {
+    return (
+      <FunctionField
+        key={key}
+        label={el.name}
+        render={record => (record[el.name] ? record[el.name].toString() : '')}
+      />
+    )
+  }
 }
-function parseComplex (name, children, isArray = false) {
-  return children.map(parsePath)
-}
 
-const ListFilter = (props) => (
-    <Filter {...props}>
-        <TextInput label="Search" source="$any" alwaysOn />
-    </Filter>
-);
+const ListFilter = props => (
+  <Filter {...props}>
+    <TextInput label='Search' source='$any' alwaysOn />
+  </Filter>
+)
 export default function PostCreate (model) {
   const ListForm = props => (
     <List {...props} filters={<ListFilter />}>
       <Datagrid>
-        {model.paths.filter(path=>{
-          return path.name !== '_id' && path.name !== '__v'
-        }).map(parsePath)}
+        {model.paths
+          .filter(path => {
+            return path.name !== '_id' && path.name !== '__v'
+          })
+          .map(parsePath)}
         <EditButton />
       </Datagrid>
     </List>

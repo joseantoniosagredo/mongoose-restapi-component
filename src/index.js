@@ -1,1 +1,5 @@
-export {default} from './components/App'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './components/App'
+
+ReactDOM.render(<App tree='/tree' />, document.getElementById('demo'));
