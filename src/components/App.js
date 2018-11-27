@@ -15,7 +15,7 @@ class App extends Component {
   }
 
   componentDidMount () {
-    fetch(this.props.tree)
+    fetch(this.props.tree, {headers: this.props.headers})
       .then(res =>
         res.json().then(tree => {
           this.setState({ tree })
