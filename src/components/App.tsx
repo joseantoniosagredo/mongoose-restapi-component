@@ -1,12 +1,12 @@
-import React, { Component } from 'react'
-
+import * as React from 'react'
+import { Component } from 'react'
 import { Admin, Resource } from 'react-admin'
 import dataProvider from './data_provider'
 import CreateForm from './CreateForm'
 import EditForm from './EditForm'
 import ListForm from './ListForm'
 
-class App extends Component {
+class App extends Component<{tree: any, headers?: any, theme?: any}> {
   state = {
     menu: null,
     tree: null,
@@ -31,7 +31,6 @@ class App extends Component {
       <div>
         {this.state.tree &&
           <Admin
-            authProvider={this.props.authProvider}
             theme={this.props.theme}
             dataProvider={dataProvider(this.state.tree, this.props.headers)}
           >

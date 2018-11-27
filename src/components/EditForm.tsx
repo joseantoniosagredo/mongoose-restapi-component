@@ -1,11 +1,12 @@
-import React from 'react'
+import * as React from 'react'
 import ModelForm from './ModelForm'
-import { Create } from 'react-admin'
+import { Edit } from 'react-admin'
+
 export default function PostCreate (models, model) {
   const CreateForm = props => (
-    <Create {...props}>
-        {ModelForm(models, model)}
-    </Create>
+    <Edit {...props}>
+        { ModelForm(models, model, true)}
+    </Edit>
   )
   return CreateForm
 }

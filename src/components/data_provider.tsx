@@ -42,8 +42,8 @@ const convertDataProviderRequestToHTTP = (models, type, resource, params) => {
     }
     case GET_MANY: {
       const search = new URLSearchParams()
-      const ids = params.ids.filter(id=>JSON.stringify(id) !== '{}')
-      if(ids.length===0) return {invalid: true}
+      const ids = params.ids.filter(id => JSON.stringify(id) !== '{}')
+      if (ids.length === 0) return { invalid: true }
       ids.forEach(id => {
         search.append('_id', id)
       })
@@ -133,20 +133,20 @@ const convertHTTPResponseToDataProvider = (
 export default (models, headers) => (type, resource, params) => {
   const { fetchJson } = fetchUtils
   if (type === DELETE_MANY) {
-    return Promise.all(
-      params.ids.map(id => {
-        const {
-          url,
-          options
-        } = convertDataProviderRequestToHTTP(models, DELETE, resource, { id })
-        return fetchJson(url, {
-          ...options,
-          headers: new Headers(headers)
-        }).then(response =>
-          convertHTTPResponseToDataProvider(response, DELETE, resource, params)
-        )
-      })
-    ).then(() => {
+
+    const promises: Promise<any>[] = params.ids.map(id => {
+      const {
+        url,
+        options
+      } = convertDataProviderRequestToHTTP(models, DELETE, resource, { id })
+      return fetchJson(url, {
+        ...options,
+        headers: new Headers(headers)
+      }).then(response =>
+        convertHTTPResponseToDataProvider(response, DELETE, resource, params)
+      )
+    })
+    return Promise.all<any>(promises).then(() => {
       return { data: [] }
     })
   }
@@ -156,7 +156,7 @@ export default (models, headers) => (type, resource, params) => {
     resource,
     params
   )
-  if(invalid) return new Promise(resolve=>resolve({data:[]}))
+  if (invalid) return new Promise<any>(resolve => resolve({ data: [] }))
   return fetchJson(url, {
     ...options,
     headers: new Headers(headers)

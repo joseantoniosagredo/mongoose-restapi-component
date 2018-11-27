@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {
   List,
   Datagrid,
@@ -57,7 +57,7 @@ const parsePath = models => (el, key) => {
     )
   }
   if (el.type && el.type.startsWith('Array')) {
-    const CursorComponent = ({ record }) => {
+    const CursorComponent: any = ({ record }) => {
       return (
         <ul>
           {record[el.name] &&
@@ -86,7 +86,7 @@ const ListFilter = props => (
     <TextInput label='Search' source='$any' alwaysOn />
   </Filter>
 )
-export default function PostCreate (models, model) {
+export default function PostCreate(models, model) {
   const ListForm = props => (
     <List {...props} filters={<ListFilter />}>
       <Datagrid>
