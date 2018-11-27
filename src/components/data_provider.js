@@ -137,7 +137,7 @@ export default (models, headers) => (type, resource, params) => {
           url,
           options
         } = convertDataProviderRequestToHTTP(models, DELETE, resource, { id })
-        return fetchJson(url, { ...options, headers }).then(response =>
+        return fetchJson(url, { ...options, headers: new Headers(headers) }).then(response =>
           convertHTTPResponseToDataProvider(response, DELETE, resource, params)
         )
       })
@@ -151,7 +151,7 @@ export default (models, headers) => (type, resource, params) => {
     resource,
     params
   )
-  return fetchJson(url, { ...options, headers }).then(response =>
+  return fetchJson(url, { ...options, headers: new Headers(headers) }).then(response =>
     convertHTTPResponseToDataProvider(response, type, resource, params)
   )
 }
