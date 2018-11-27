@@ -5,7 +5,7 @@
   "main": "built/App.js",
   "module": "built/App.js",
   "files": [
-    "src"
+    "built"
   ],
   "scripts": {
     "start": "react-scripts start",
