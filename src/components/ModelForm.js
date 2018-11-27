@@ -10,23 +10,31 @@ import {
   DisabledInput
 } from 'react-admin'
 
-function parsePath (el) {
+const parsePath = models => el => {
   if (el.type === 'String') {
-    return <TextInput label={el.label} source={el.name} required={el.required} />
+    return (
+      <TextInput label={el.label} source={el.name} required={el.required} />
+    )
   }
   if (el.type === 'Date') {
-    return <TextInput label={el.label} source={el.name} required={el.required} />
+    return (
+      <TextInput label={el.label} source={el.name} required={el.required} />
+    )
   }
   if (el.type === 'ObjectId') {
-    return <DisabledInput label={el.label} source={el.name} required={el.required} />
+    return (
+      <DisabledInput label={el.label} source={el.name} required={el.required} />
+    )
   }
   if (el.type === 'Number') {
-    return <TextInput label={el.label} source={el.name} required={el.required} />
+    return (
+      <TextInput label={el.label} source={el.name} required={el.required} />
+    )
   }
   if (el.type === 'Ref') {
     return (
       <ReferenceInput label={el.label} source={el.name} reference={el.to}>
-        <SelectInput optionText={'name'} />
+        <SelectInput optionText={models.find(model => model.name === el.to).label} />
       </ReferenceInput>
     )
   }
@@ -34,17 +42,19 @@ function parsePath (el) {
     return (
       <ArrayInput label={el.label} source={el.name}>
         <SimpleFormIterator>
-          {el.children.map(parsePath)}
+          {el.children.map(parsePath(models))}
         </SimpleFormIterator>
       </ArrayInput>
     )
   }
   if (el.type === 'ArrayRef') {
     return (
-      <ArrayInput label={el.label} source={el.name}>
+      <ArrayInput label={el.label} source={el.name} defaultValue=''>
         <SimpleFormIterator>
           <ReferenceInput reference={el.to}>
-            <SelectInput optionText={'name'} />
+            <SelectInput
+              optionText={models.find(model => model.name === el.to).label}
+            />
           </ReferenceInput>
         </SimpleFormIterator>
       </ArrayInput>
@@ -52,7 +62,12 @@ function parsePath (el) {
   }
   if (el.type.startsWith('Array')) {
     return (
-      <ArrayInput label={el.label} source={el.name} required={el.required}>
+      <ArrayInput
+        label={el.label}
+        source={el.name}
+        required={el.required}
+        defaultValue={{ hey: 3 }}
+      >
         <SimpleFormIterator>
           <TextInput />
         </SimpleFormIterator>
@@ -61,27 +76,32 @@ function parsePath (el) {
   }
   return null
 }
-const parsePathPrefix = prefix => (el, key) => {
-  return parsePath({ ...el, name: `${prefix}.${el.name}`, label: el.name })
+const parsePathPrefix = (models, prefix) => (el, key) => {
+  return parsePath(models)({
+    ...el,
+    name: `${prefix}.${el.name}`,
+    label: el.name
+  })
 }
-function parseComplex (name, children, isArray = false) {
+function parseComplex (models, name, children, isArray = false) {
   if (name !== 'General') {
     return (
-      <FormTab label={name}>
-        {children.map(parsePathPrefix(name))}
+      <FormTab key={name} label={name}>
+        {children.map(parsePathPrefix(models, name))}
       </FormTab>
     )
   }
   return (
-    <FormTab label={name}>
-      {children.map(parsePath)}
+    <FormTab key={0} label={name}>
+      {children.map(parsePath(models))}
     </FormTab>
   )
 }
-export default function PostCreate (model, showId = false) {
+export default function PostCreate (models, model, showId = false) {
   return (
     <TabbedForm>
       {parseComplex(
+        models,
         'General',
         model.paths.filter(
           path =>
@@ -94,7 +114,9 @@ export default function PostCreate (model, showId = false) {
         .filter(
           path => path.hasOwnProperty('children') && path.type !== 'Array'
         )
-        .map(el => parseComplex(el.name, el.children, el.type === 'Array'))}
+        .map(el =>
+          parseComplex(models, el.name, el.children, el.type === 'Array')
+        )}
     </TabbedForm>
   )
 }

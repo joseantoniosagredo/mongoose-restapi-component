@@ -1,10 +1,10 @@
 import React from 'react'
 import ModelForm from './ModelForm'
 import { Create } from 'react-admin'
-export default function PostCreate (model) {
+export default function PostCreate (models, model) {
   const CreateForm = props => (
     <Create {...props}>
-        {ModelForm(model)}
+        {ModelForm(models, model)}
     </Create>
   )
   return CreateForm

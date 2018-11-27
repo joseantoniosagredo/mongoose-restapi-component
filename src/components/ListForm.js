@@ -13,7 +13,7 @@ import {
 } from 'react-admin'
 import { Filter, TextInput } from 'react-admin'
 
-function parsePath (el, key) {
+const parsePath = models => (el, key) => {
   if (el.type === 'String') {
     return <TextField key={key} source={el.name} />
   }
@@ -29,7 +29,7 @@ function parsePath (el, key) {
   if (el.type === 'Ref') {
     return (
       <ReferenceField key={key} source={el.name} reference={el.to}>
-        <TextField source={'name'} />
+        <TextField source={models.find(model => model.name === el.to).label} />
       </ReferenceField>
     )
   }
@@ -51,7 +51,7 @@ function parsePath (el, key) {
         reference={el.to}
       >
         <SingleFieldList>
-          <ChipField source={'name'} />
+          <ChipField source={models.find(model => model.name === el.to).label} />
         </SingleFieldList>
       </ReferenceArrayField>
     )
@@ -86,7 +86,7 @@ const ListFilter = props => (
     <TextInput label='Search' source='$any' alwaysOn />
   </Filter>
 )
-export default function PostCreate (model) {
+export default function PostCreate (models, model) {
   const ListForm = props => (
     <List {...props} filters={<ListFilter />}>
       <Datagrid>
@@ -94,7 +94,7 @@ export default function PostCreate (model) {
           .filter(path => {
             return path.name !== '_id' && path.name !== '__v'
           })
-          .map(parsePath)}
+          .map(parsePath(models))}
         <EditButton />
       </Datagrid>
     </List>

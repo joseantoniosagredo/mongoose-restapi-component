@@ -42,7 +42,9 @@ const convertDataProviderRequestToHTTP = (models, type, resource, params) => {
     }
     case GET_MANY: {
       const search = new URLSearchParams()
-      params.ids.forEach(id => {
+      const ids = params.ids.filter(id=>JSON.stringify(id) !== '{}')
+      if(ids.length===0) return {invalid: true}
+      ids.forEach(id => {
         search.append('_id', id)
       })
       return { url: `${API_URL}${path}?${search.toString()}` }
@@ -137,7 +139,10 @@ export default (models, headers) => (type, resource, params) => {
           url,
           options
         } = convertDataProviderRequestToHTTP(models, DELETE, resource, { id })
-        return fetchJson(url, { ...options, headers: new Headers(headers) }).then(response =>
+        return fetchJson(url, {
+          ...options,
+          headers: new Headers(headers)
+        }).then(response =>
           convertHTTPResponseToDataProvider(response, DELETE, resource, params)
         )
       })
@@ -145,13 +150,17 @@ export default (models, headers) => (type, resource, params) => {
       return { data: [] }
     })
   }
-  const { url, options } = convertDataProviderRequestToHTTP(
+  const { url, options, invalid } = convertDataProviderRequestToHTTP(
     models,
     type,
     resource,
     params
   )
-  return fetchJson(url, { ...options, headers: new Headers(headers) }).then(response =>
+  if(invalid) return new Promise(resolve=>resolve({data:[]}))
+  return fetchJson(url, {
+    ...options,
+    headers: new Headers(headers)
+  }).then(response =>
     convertHTTPResponseToDataProvider(response, type, resource, params)
   )
 }

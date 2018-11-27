@@ -39,9 +39,9 @@ class App extends Component {
               <Resource
                 key={model.route}
                 name={model.name}
-                list={ListForm(model)}
-                edit={EditForm(model)}
-                create={CreateForm(model)}
+                list={ListForm(this.state.tree, model)}
+                edit={EditForm(this.state.tree, model)}
+                create={CreateForm(this.state.tree, model)}
               />
             ))}
           </Admin>}
